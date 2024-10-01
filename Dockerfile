@@ -1,7 +1,7 @@
 ARG ALPINE_VERSION=3.19
 
 # stage 1: build go app
-FROM golang:1.20.14-alpine${ALPINE_VERSION} AS builder
+FROM golang:1.21-alpine${ALPINE_VERSION} AS builder
 
 # golang build env
 ARG CGO_ENABLED=0
