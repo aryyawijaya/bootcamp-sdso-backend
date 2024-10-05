@@ -7,6 +7,7 @@ import (
 	"log"
 	"net"
 	"os"
+	"strconv"
 
 	"cloud.google.com/go/cloudsqlconn"
 	"github.com/jackc/pgx/v5"
@@ -30,14 +31,15 @@ func ConnectDatabase() {
 	// Cloud Secret Manager (https://cloud.google.com/secret-manager) to help
 	// keep passwords and other secrets safe.
 	var (
-		dbUser                 = mustGetenv("POSTGRES_USER")            // e.g. 'my-db-user'
-		dbPwd                  = mustGetenv("POSTGRES_PASSWORD")        // e.g. 'my-db-password'
-		dbName                 = mustGetenv("POSTGRES_DB")              // e.g. 'my-database'
-		instanceConnectionName = mustGetenv("INSTANCE_CONNECTION_NAME") // e.g. 'project:region:instance'
+		dbUser                 = mustGetenv("POSTGRES_USER")               // e.g. 'my-db-user'
+		dbPwd                  = mustGetenv("POSTGRES_PASSWORD")           // e.g. 'my-db-password'
+		dbName                 = mustGetenv("POSTGRES_DB")                 // e.g. 'my-database'
+		dbPort, _              = strconv.Atoi(mustGetenv("POSTGRES_PORT")) // e.g. 'my-database'
+		instanceConnectionName = mustGetenv("INSTANCE_CONNECTION_NAME")    // e.g. 'project:region:instance'
 		usePrivate             = os.Getenv("POSTGRES_HOST")
 	)
 
-	dsn := fmt.Sprintf("user=%s password=%s database=%s", dbUser, dbPwd, dbName)
+	dsn := fmt.Sprintf("user=%s password=%s database=%s, port=%d", dbUser, dbPwd, dbName, dbPort)
 	config, err := pgx.ParseConfig(dsn)
 	if err != nil {
 		fmt.Println("There is an error while connecting to the database ", err)
